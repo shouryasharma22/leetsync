@@ -25,12 +25,12 @@ function App() {
         }
 
         if (result.isAuthenticated && result.githubToken && result.githubUsername) {
-          // Validate that the token hasn't expired or been revoked (Spec requirement)
+          // Validate that the token hasn't expired or been revoked
           const isValid = await verifyGitHubToken(result.githubToken);
           if (isValid) {
             setIsAuthenticated(true);
             setGithubUsername(result.githubUsername);
-            setStatusMessage('Connected to GitHub');
+            setStatusMessage('Account Linked');
           } else {
             // Token was revoked -> clear auth & show warning badge
             await handleUnlink('Session expired (401). Please re-authenticate.');
@@ -38,7 +38,7 @@ function App() {
             chrome.action.setBadgeBackgroundColor({ color: '#ef4444' });
           }
         } else {
-          setStatusMessage('Not connected');
+          setStatusMessage('Account Unlinked');
         }
       }
     );
@@ -57,7 +57,7 @@ function App() {
   };
 
   // 2. Trigger OAuth flow via Background Service Worker
-const handleAuthenticate = () => {
+  const handleAuthenticate = () => {
     setIsLoading(true);
     setStatusMessage('Opening GitHub login...');
 
@@ -78,7 +78,7 @@ const handleAuthenticate = () => {
         if (response && response.success) {
           setIsAuthenticated(true);
           setGithubUsername(response.githubUsername);
-          setStatusMessage('Connected to GitHub');
+          setStatusMessage('Account Linked');
         } else {
           setStatusMessage(`Auth failed: ${response?.error || 'Unknown error'}`);
         }
@@ -87,7 +87,7 @@ const handleAuthenticate = () => {
   };
 
   // 3. Unlink / Logout handler
-  const handleUnlink = async (customMessage = 'Account unlinked') => {
+  const handleUnlink = async (customMessage = 'Account Unlinked') => {
     await chrome.storage.local.remove(['isAuthenticated', 'githubUsername', 'githubToken']);
     setIsAuthenticated(false);
     setGithubUsername('');
@@ -100,75 +100,41 @@ const handleAuthenticate = () => {
     chrome.storage.local.set({ repoName: newRepo });
   };
 
-  // 5. Context Bridge Test Toast
-  const testPageToast = async () => {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (!tab?.id || !tab.url) return;
-
-    if (tab.url.startsWith('chrome://') || tab.url.startsWith('edge://')) {
-      setStatusMessage('Cannot run on internal browser pages!');
-      return;
-    }
-
-    await chrome.scripting.executeScript<string[], void>({
-      target: { tabId: tab.id },
-      args: [repoName],
-      func: (targetRepo) => {
-        const toast = document.createElement('div');
-        toast.innerText = `🚀 LeetSync Ready! Target Repo: ${targetRepo}`;
-        Object.assign(toast.style, {
-          position: 'fixed',
-          bottom: '20px',
-          right: '20px',
-          backgroundColor: '#10b981',
-          color: '#ffffff',
-          padding: '12px 20px',
-          borderRadius: '8px',
-          fontWeight: 'bold',
-          zIndex: '999999',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-          fontFamily: 'sans-serif',
-        });
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3500);
-      },
-    });
-  };
-
   return (
     <div className="popup-container">
-      <header className="popup-header">
-        <h2>⚡ LeetSync</h2>
-        <span className={`badge ${isAuthenticated ? 'connected' : 'disconnected'}`}>
-          {isAuthenticated ? '● Linked' : '○ Unlinked'}
-        </span>
-      </header>
+      {/* Branding: big & centered when unlinked, compact top-left when linked */}
+      {isAuthenticated ? (
+        <header className="brand brand-compact">
+          <img className="brand-logo" src="/logo.png" alt="" />
+          <img className="brand-wordmark" src="/wordmark.png" alt="LeetSync" />
+        </header>
+      ) : (
+        <header className="brand brand-hero">
+          <img className="brand-logo" src="/logo.png" alt="" />
+          <img className="brand-wordmark" src="/wordmark.png" alt="LeetSync" />
+          <p className="brand-tagline">Push your leetcode submissions to github</p>
+        </header>
+      )}
 
-      {/* 1. GitHub Auth Section */}
-      <section className="card">
-        {!isAuthenticated ? (
-          <button
-            className="btn-primary"
-            onClick={handleAuthenticate}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Authenticating...' : 'Authenticate with GitHub'}
+      {/* Account card (linked only) */}
+      {isAuthenticated && (
+        <section className="card account-info">
+          <p>
+            <strong>Account:</strong> @{githubUsername}
+          </p>
+          <p>
+            <strong>Linked Repo:</strong>
+          </p>
+          <p>
+            {githubUsername}/{repoName}
+          </p>
+          <button className="btn-danger" onClick={() => handleUnlink()}>
+            Unlink Github Account
           </button>
-        ) : (
-          <div className="account-info">
-            <p><strong>Account:</strong> @{githubUsername}</p>
-            <p><strong>Linked Repo:</strong> {githubUsername}/{repoName}</p>
-            <button
-              className="btn-danger"
-              onClick={() => handleUnlink()}
-            >
-              Unlink GitHub Account
-            </button>
-          </div>
-        )}
-      </section>
+        </section>
+      )}
 
-      {/* 2. Target Repository Input */}
+      {/* Target Repository */}
       <section className="card">
         <label htmlFor="repo-input">Target Repository</label>
         <input
@@ -180,13 +146,14 @@ const handleAuthenticate = () => {
         />
       </section>
 
-      {/* 3. Status & Context Bridge Test */}
-      <footer className="popup-footer">
-        <p className="status-text">Status: {statusMessage}</p>
-        <button className="btn-secondary" onClick={testPageToast}>
-          Test Toast on Active Page
+      {/* Authenticate button (unlinked only) */}
+      {!isAuthenticated && (
+        <button className="btn-primary" onClick={handleAuthenticate} disabled={isLoading}>
+          {isLoading ? 'Authenticating...' : 'Authenticate account with GitHub'}
         </button>
-      </footer>
+      )}
+
+      <p className="status-text">Status: {statusMessage}</p>
     </div>
   );
 }
