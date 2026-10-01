@@ -1,0 +1,117 @@
+.popup-container {
+  width: 300px;
+  padding: 16px;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  background-color: #1a1a1a;
+  color: #f3f4f6;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 8px;
+}
+
+.popup-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.badge.connected {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.badge.disconnected {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.card {
+  background: #262626;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card label {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  text-align: left;
+}
+
+.card input {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #404040;
+  background: #171717;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.account-info p {
+  margin: 4px 0;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.btn-primary {
+  background-color: #238636;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #2ea043;
+}
+
+.btn-secondary {
+  background-color: #374151;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.status-text {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin: 0 0 8px 0;
+}
+
+.btn-danger {
+  margin-top: 8px;
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn-danger:hover {
+  background-color: rgba(239, 68, 68, 0.25);
+}
