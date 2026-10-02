@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "LeetSync",
   "version": "1.0.0",
+  "key":"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2Z8RvAFYGLApOeZTks4ouN4JfJ7oLeZugZNtBgnoW+Ldyi3C/gOxJw+V1Q1rxt9RGXgZvlj5U/W9pG8IWvPLSq4Wri72llYGchwhqnI9OoVF2nAg2A/DD0Z7Ov9Mg1vzKXJklbD/adjiZGy+gqFNW7dxZ0ougmGHZilrUVAObkjo04pV6k3RnpOo3OdxZXbfWie4VF6T3pH/TINj+MQcVjtAZac3+J4LvyAVhR8Tm3ahCjgUt5gy1wtDKieX8D7Rpu2TQcYx6yO3gRxZn0qBPUoW3fbTzTChQ+28Q/srqY8Wquc4kJMPrr0B0+KFzCg1uzreg72N5xOeir5hijdPaQIDAQAB",
   "action": {
     "default_popup": "index.html"
   },
