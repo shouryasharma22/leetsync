@@ -9,6 +9,7 @@ interface StorageData {
 }
 
 function App() {
+  const [isCheckingStorage, setIsCheckingStorage] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [githubUsername, setGithubUsername] = useState<string>('');
   const [repoName, setRepoName] = useState<string>('my-leetcode-solutions');
@@ -25,13 +26,15 @@ function App() {
         }
 
         if (result.isAuthenticated && result.githubToken && result.githubUsername) {
-          // Validate that the token hasn't expired or been revoked
+          // Optimistically render the Linked UI immediately to prevent the Unlinked flash
+          setIsAuthenticated(true);
+          setGithubUsername(result.githubUsername);
+          setStatusMessage('Account Linked');
+          setIsCheckingStorage(false);
+
+          // Validate in the background that the token hasn't expired or been revoked
           const isValid = await verifyGitHubToken(result.githubToken);
-          if (isValid) {
-            setIsAuthenticated(true);
-            setGithubUsername(result.githubUsername);
-            setStatusMessage('Account Linked');
-          } else {
+          if (!isValid) {
             // Token was revoked -> clear auth & show warning badge
             await handleUnlink('Session expired (401). Please re-authenticate.');
             chrome.action.setBadgeText({ text: '!' });
@@ -39,6 +42,7 @@ function App() {
           }
         } else {
           setStatusMessage('Account Unlinked');
+          setIsCheckingStorage(false);
         }
       }
     );
@@ -99,6 +103,11 @@ function App() {
     setRepoName(newRepo);
     chrome.storage.local.set({ repoName: newRepo });
   };
+
+  // Prevent rendering the unlinked view during the ~2ms chrome.storage read
+  if (isCheckingStorage) {
+    return <div className="popup-container" />;
+  }
 
   return (
     <div className="popup-container">
