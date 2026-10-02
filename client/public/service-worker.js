@@ -1,10 +1,3 @@
-// client/public/service-worker.js
-
-// Replace YOUR_GITHUB_CLIENT_SECRET locally when testing OAuth login,
-// and keep the placeholder when pushing code to GitHub!
-const GITHUB_CLIENT_ID = 'Ov23cttVOHbjTmiLR2Qe';
-const GITHUB_CLIENT_SECRET = 'YOUR_GITHUB_CLIENT_SECRET';
-
 const BG_LANG_EXT = {
   cpp: 'cpp',
   java: 'java',
