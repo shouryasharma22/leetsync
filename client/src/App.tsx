@@ -16,7 +16,6 @@ function App() {
   const [statusMessage, setStatusMessage] = useState<string>('Checking status...');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // 1. Load saved state from chrome.storage.local when popup opens
   useEffect(() => {
     chrome.storage.local.get(
       ['isAuthenticated', 'githubUsername', 'githubToken', 'repoName'],
@@ -26,16 +25,13 @@ function App() {
         }
 
         if (result.isAuthenticated && result.githubToken && result.githubUsername) {
-          // Optimistically render the Linked UI immediately to prevent the Unlinked flash
           setIsAuthenticated(true);
           setGithubUsername(result.githubUsername);
           setStatusMessage('Account Linked');
           setIsCheckingStorage(false);
 
-          // Validate in the background that the token hasn't expired or been revoked
           const isValid = await verifyGitHubToken(result.githubToken);
           if (!isValid) {
-            // Token was revoked -> clear auth & show warning badge
             await handleUnlink('Session expired (401). Please re-authenticate.');
             chrome.action.setBadgeText({ text: '!' });
             chrome.action.setBadgeBackgroundColor({ color: '#ef4444' });
@@ -48,7 +44,6 @@ function App() {
     );
   }, []);
 
-  // Verify token validity against GitHub API
   const verifyGitHubToken = async (token: string): Promise<boolean> => {
     try {
       const res = await fetch('https://api.github.com/user', {
@@ -56,11 +51,10 @@ function App() {
       });
       return res.status !== 401;
     } catch {
-      return true; // Don't log out on temporary offline network hiccups
+      return true;
     }
   };
 
-  // 2. Trigger OAuth flow via Background Service Worker
   const handleAuthenticate = () => {
     setIsLoading(true);
     setStatusMessage('Opening GitHub login...');
@@ -90,7 +84,6 @@ function App() {
     );
   };
 
-  // 3. Unlink / Logout handler
   const handleUnlink = async (customMessage = 'Account Unlinked') => {
     await chrome.storage.local.remove(['isAuthenticated', 'githubUsername', 'githubToken']);
     setIsAuthenticated(false);
@@ -98,20 +91,17 @@ function App() {
     setStatusMessage(customMessage);
   };
 
-  // 4. Persist Target Repository changes immediately to chrome.storage.local
   const handleRepoChange = (newRepo: string) => {
     setRepoName(newRepo);
     chrome.storage.local.set({ repoName: newRepo });
   };
 
-  // Prevent rendering the unlinked view during the ~2ms chrome.storage read
   if (isCheckingStorage) {
     return <div className="popup-container" />;
   }
 
   return (
     <div className="popup-container">
-      {/* Branding: big & centered when unlinked, compact top-left when linked */}
       {isAuthenticated ? (
         <header className="brand brand-compact">
           <img className="brand-logo" src="/logo.png" alt="" />
@@ -125,7 +115,6 @@ function App() {
         </header>
       )}
 
-      {/* Account card (linked only) */}
       {isAuthenticated && (
         <section className="card account-info">
           <p>
@@ -143,7 +132,6 @@ function App() {
         </section>
       )}
 
-      {/* Target Repository */}
       <section className="card">
         <label htmlFor="repo-input">Target Repository</label>
         <input
@@ -155,7 +143,6 @@ function App() {
         />
       </section>
 
-      {/* Authenticate button (unlinked only) */}
       {!isAuthenticated && (
         <button className="btn-primary" onClick={handleAuthenticate} disabled={isLoading}>
           {isLoading ? 'Authenticating...' : 'Authenticate account with GitHub'}

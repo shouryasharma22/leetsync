@@ -1,4 +1,3 @@
-// client/public/content-script.js
 console.log('⚡ LeetSync Content Script Active on LeetCode!');
 
 let isSyncing = false;

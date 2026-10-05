@@ -11,7 +11,6 @@
   font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* ---------- Branding ---------- */
 .brand {
   display: flex;
   align-items: center;
@@ -25,7 +24,6 @@
   -webkit-user-drag: none;
 }
 
-/* Unlinked: big, centered stack */
 .brand-hero {
   flex-direction: column;
   text-align: center;
@@ -50,7 +48,6 @@
   color: #d1d5db;
 }
 
-/* Linked: compact logo + wordmark on one centered row */
 .brand-compact {
   flex-direction: row;
   gap: 12px;
@@ -63,13 +60,10 @@
 
 .brand-compact .brand-wordmark {
   width: 118px;
-  /* The wordmark image has an extra descender (the "y") below the baseline,
-     so its box center sits lower than the letters' center. Nudge it down so
-     the letters line up with the logo's center. */
+
   transform: translateY(3px);
 }
 
-/* ---------- Cards ---------- */
 .card {
   background: #262626;
   padding: 16px;
@@ -117,7 +111,6 @@
   margin-top: 4px;
 }
 
-/* ---------- Buttons ---------- */
 .btn-primary,
 .btn-danger {
   width: 100%;
@@ -157,7 +150,6 @@
   background-color: #a8241d;
 }
 
-/* ---------- Status ---------- */
 .status-text {
   margin: 2px 0 0;
   text-align: center;

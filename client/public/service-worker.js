@@ -20,7 +20,6 @@ const BG_LANG_EXT = {
   oraclesql: 'sql',
   postgresql: 'sql',
 };
-//fix the ( error below
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'AUTHENTICATE_GITHUB') {
@@ -48,7 +47,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 
-// UTF-8 safe Base64 encoding/decoding required by GitHub Contents API
 function toBase64(str) {
   return btoa(unescape(encodeURIComponent(str)));
 }
@@ -57,21 +55,18 @@ function fromBase64(b64) {
   return decodeURIComponent(escape(atob(b64.replace(/\n/g, ''))));
 }
 
-// Strip the 4-line LeetSync performance header to extract the exact raw code
 function stripLeetSyncHeader(content) {
   const normalized = content.replace(/\r\n/g, '\n');
   const headerRegex = /^(?:(?:\/\/|#)\s*Problem:.*\n(?:\/\/|#)\s*URL:.*\n(?:\/\/|#)\s*Runtime:.*\n(?:\/\/|#)\s*Memory:.*\n\n?)/;
   return normalized.replace(headerRegex, '').trim();
 }
 
-// Helper to flag 401 Unauthorized token revocation
 async function handleUnauthorizedToken() {
   await chrome.storage.local.remove(['isAuthenticated', 'githubToken', 'githubUsername']);
   chrome.action.setBadgeText({ text: '!' });
   chrome.action.setBadgeBackgroundColor({ color: '#ef4444' });
 }
 
-// Ensure the target repository exists (creates it automatically if missing)
 async function ensureRepoExists(owner, repo, token) {
   const checkRes = await fetch('https://api.github.com/repos/' + owner + '/' + repo, {
     headers: {
@@ -114,7 +109,6 @@ async function ensureRepoExists(owner, repo, token) {
   }
 }
 
-// Get existing file SHA and decoded content from GitHub (if file exists)
 async function getExistingFile(owner, repo, path, token) {
   const res = await fetch('https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + path, {
     headers: {
@@ -138,7 +132,6 @@ async function getExistingFile(owner, repo, path, token) {
   };
 }
 
-// Create or update a file in GitHub via PUT /repos/{owner}/{repo}/contents/{path}
 async function upsertGitHubFile(owner, repo, path, content, commitMessage, token, sha = null) {
   const body = {
     message: commitMessage,
@@ -169,7 +162,6 @@ async function upsertGitHubFile(owner, repo, path, content, commitMessage, token
   return res.json();
 }
 
-// Update the root README.md file with global solved count and sorted bulleted list
 async function updateGlobalReadme(owner, repo, payload, token) {
   const globalReadmePath = 'README.md';
   const existing = await getExistingFile(owner, repo, globalReadmePath, token);
@@ -253,7 +245,6 @@ async function updateGlobalReadme(owner, repo, payload, token) {
   );
 }
 
-// Main Pipeline to Push Code + README to GitHub
 async function pushSolutionToGitHub(payload) {
   const storage = await chrome.storage.local.get([
     'isAuthenticated',
@@ -272,13 +263,11 @@ async function pushSolutionToGitHub(payload) {
   const repo = (storage.repoName || 'my-leetcode-solutions').trim();
   const token = storage.githubToken;
 
-  // 1. Validate token & ensure repository exists
   await ensureRepoExists(owner, repo, token);
 
   const solutionPath = payload.folderName + '/' + payload.fileName;
   const readmePath = payload.folderName + '/README.md';
 
-  // 2. Check if solution already exists (Duplicate & Version Control requirement)
   const existingSolution = await getExistingFile(owner, repo, solutionPath, token);
 
   if (existingSolution) {
@@ -294,7 +283,6 @@ async function pushSolutionToGitHub(payload) {
     }
   }
 
-  // 3. Commit problem README.md if it doesn't exist yet
   const existingReadme = await getExistingFile(owner, repo, readmePath, token);
   if (!existingReadme && payload.readmeContent) {
     await upsertGitHubFile(
@@ -307,7 +295,6 @@ async function pushSolutionToGitHub(payload) {
     );
   }
 
-  // 4. Commit or Update the Solution file (includes both Runtime and Memory metrics)
   const commitPrefix = existingSolution ? 'Update solution' : 'Auto-commit: Solved';
   const memoryStat = payload.memory
     ? ', Memory: ' + payload.memory + ' (Beats ' + (payload.memoryBeats || 'N/A') + ')'
@@ -338,7 +325,6 @@ async function pushSolutionToGitHub(payload) {
     existingSolution?.sha || null
   );
 
-  // 5. Update root README.md with global stats & save last synced info
   await updateGlobalReadme(owner, repo, payload, token);
   await chrome.storage.local.set({
     lastSynced: payload.problemId + '. ' + payload.problemTitle + ' (' + payload.language + ')',
@@ -347,7 +333,6 @@ async function pushSolutionToGitHub(payload) {
   return { skipped: false };
 }
 
-// Polls LeetCode from the background if the user closes the tab mid-evaluation
 async function pollPendingSubmissionInBackground({ titleSlug, submittedAt }, tabId) {
   const listQuery = [
     'query submissionList($questionSlug: String!) {',
@@ -381,7 +366,7 @@ async function pollPendingSubmissionInBackground({ titleSlug, submittedAt }, tab
         await chrome.tabs.get(tabId);
         continue;
       } catch {
-        // Tab was closed! Background worker takes over immediately.
+
       }
     }
 
