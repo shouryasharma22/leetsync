@@ -160,7 +160,7 @@ Make sure you have the following installed on your PC:
 #### Step 1: Clone the Repository to Your PC
 Open your terminal (or Command Prompt / PowerShell) and run:
 ```bash
-git clone [https://github.com/shouryasharma22/leetsync.git](https://github.com/shouryasharma22/leetsync.git)
+git clone https://github.com/shouryasharma22/leetsync.git
 cd leetsync/client
 ```
 
@@ -178,7 +178,7 @@ To run a custom build with your own GitHub OAuth credentials:
    * **Homepage URL:** `https://nembacmamcnbhofiakooecbjjhjlljip.chromiumapp.org/`
    * **Redirect URI (Authorization callback URL):**
      ```text
-     [https://nembacmamcnbhofiakooecbjjhjlljip.chromiumapp.org/](https://nembacmamcnbhofiakooecbjjhjlljip.chromiumapp.org/)
+     https://nembacmamcnbhofiakooecbjjhjlljip.chromiumapp.org/
      ```
      *(Note: Because `client/public/manifest.json` contains a locked public `"key"`, Chrome assigns this exact extension ID `nembacmamcnbhofiakooecbjjhjlljip` on every PC!)*
 3. Click **Register application**, copy your **Client ID**, and click **Generate a new client secret** to copy your **Client Secret**.
