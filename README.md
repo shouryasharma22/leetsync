@@ -12,6 +12,7 @@
 
 ## 📖 Table of Contents
 - [Overview](#-overview)
+- [Screenshots (Working Examples)](#-screenshots-working-examples)
 - [Key Features](#-key-features)
 - [System Architecture](#️-system-architecture)
 - [Generated Repository Structure](#-generated-repository-structure)
@@ -31,15 +32,31 @@
 
 ---
 
+## 📸 Screenshots (Working Examples)
+
+### 1. Extension Popup — Unlinked State
+![Unlinked Popup UI](./assets/unlinked-popup.jpg)
+
+### 2. Extension Popup — Linked to GitHub Repository
+![Linked Popup UI](./assets/linked-popup.jpg)
+
+### 3. Live LeetCode Syncing Notification on Accepted Submission
+![Checking and Syncing Toast](./assets/syncing-toast.jpg)
+
+### 4. Smart Deduplication Check (Skipping Identical Solutions)
+![Identical Solution Already in GitHub Toast](./assets/duplicate-toast.jpg)
+
+---
+
 ## ✨ Key Features
 
-* **🔐 GitHub OAuth 2.0 Authentication:** Logs in directly via `chrome.identity.launchWebAuthFlow` with `repo` scope (supports both public and private repositories).
-* **🚨 Live `401` Token Revocation Detection:** Validates your token against `GET https://api.github.com/user` on popup open and before every push. If revoked or expired, stale credentials are wiped and a red `!` badge alerts you on the extension toolbar icon.
-* **📁 Auto-Repository Creation:** Automatically creates your target GitHub repository via `POST /user/repos` if it does not exist yet.
-* **🛡️ Anti-Spoofing & GraphQL Code Extraction:** Bypasses Monaco Editor DOM virtualization truncation by querying LeetCode's `/graphql` API directly for full source code and verifying that the submission timestamp is `< 60 seconds` old.
-* **🔄 Background Tab-Closure Resilience:** If you click **Submit** and close the LeetCode tab before evaluation finishes, the background Service Worker takes over polling and pushes the solution once accepted.
-* **🧠 Smart Deduplication & SHA Version Control:** Strips the 4-line dynamic performance header and compares raw code before pushing. Identical code is skipped to prevent commit spam; updated/optimized code overwrites the existing file cleanly using its Git `sha`.
-* **📊 Global README Dashboard:** Automatically maintains a root `README.md` in your solutions repository with a total solved counter and a numerically sorted list of every problem you have solved alongside its Runtime and Memory stats.
+- **🔐 GitHub OAuth 2.0 Authentication:** Logs in directly via `chrome.identity.launchWebAuthFlow` with `repo` scope (supports both public and private repositories).
+- **🚨 Live `401` Token Revocation Detection:** Validates your token against `GET https://api.github.com/user` on popup open and before every push. If revoked or expired, stale credentials are wiped and a red `!` badge alerts you on the extension toolbar icon.
+- **📁 Auto-Repository Creation:** Automatically creates your target GitHub repository via `POST /user/repos` if it does not exist yet.
+- **🛡️ Anti-Spoofing & GraphQL Code Extraction:** Bypasses Monaco Editor DOM virtualization truncation by querying LeetCode's `/graphql` API directly for full source code and verifying that the submission timestamp is `< 60 seconds` old.
+- **🔄 Background Tab-Closure Resilience:** If you click **Submit** and close the LeetCode tab before evaluation finishes, the background Service Worker takes over polling and pushes the solution once accepted.
+- **🧠 Smart Deduplication & SHA Version Control:** Strips the 4-line dynamic performance header and compares raw code before pushing. Identical code is skipped to prevent commit spam; updated/optimized code overwrites the existing file cleanly using its Git `sha`.
+- **📊 Global README Dashboard:** Automatically maintains a root `README.md` in your solutions repository with a total solved counter and a numerically sorted list of every problem you have solved alongside its Runtime and Memory stats.
 
 ---
 
@@ -136,14 +153,14 @@ You can install LeetSync on your computer in **two ways**:
 
 #### Prerequisites
 Make sure you have the following installed on your PC:
-* **Node.js** (v18.0.0 or higher) & **npm** — [Download Node.js](https://nodejs.org/)
-* **Git** — [Download Git](https://git-scm.com/)
-* **Google Chrome** (or any Chromium-based browser)
+- **Node.js** (v18.0.0 or higher) & **npm** — [Download Node.js](https://nodejs.org/)
+- **Git** — [Download Git](https://git-scm.com/)
+- **Google Chrome** (or any Chromium-based browser)
 
 #### Step 1: Clone the Repository to Your PC
 Open your terminal (or Command Prompt / PowerShell) and run:
 ```bash
-git clone [https://github.com/shouryasharma22/leetsync.git](https://github.com/shouryasharma22/leetsync.git)
+git clone https://github.com/shouryasharma22/leetsync.git
 cd leetsync/client
 ```
 
@@ -161,7 +178,7 @@ To run a custom build with your own GitHub OAuth credentials:
    * **Homepage URL:** `https://nembacmamcnbhofiakooecbjjhjlljip.chromiumapp.org/`
    * **Redirect URI (Authorization callback URL):**
      ```text
-     [https://nembacmamcnbhofiakooecbjjhjlljip.chromiumapp.org/](https://nembacmamcnbhofiakooecbjjhjlljip.chromiumapp.org/)
+     https://nembacmamcnbhofiakooecbjjhjlljip.chromiumapp.org/
      ```
      *(Note: Because `client/public/manifest.json` contains a locked public `"key"`, Chrome assigns this exact extension ID `nembacmamcnbhofiakooecbjjhjlljip` on every PC!)*
 3. Click **Register application**, copy your **Client ID**, and click **Generate a new client secret** to copy your **Client Secret**.
@@ -249,9 +266,9 @@ leetsync/
 
 ## 🔧 Troubleshooting
 
-* **`Service worker registration failed` or changes not showing up:**
+- **`Service worker registration failed` or changes not showing up:**
   Make sure you ran `npm run build` inside the `client/` directory and selected **`client/dist`** (not `client/` or `client/public/`) when clicking **Load unpacked** in `chrome://extensions`.
-* **Red `!` Badge on the Extension Icon:**
+- **Red `!` Badge on the Extension Icon:**
   Your GitHub OAuth token was revoked or expired (`401 Unauthorized`). Open the LeetSync popup and click **Authenticate account with GitHub** to generate a fresh session.
-* **No Toast Appears After Clicking Submit on LeetCode:**
+- **No Toast Appears After Clicking Submit on LeetCode:**
   Refresh your LeetCode tab once after installing or reloading the extension so Chrome injects the latest `content-script.js` into the page.
